@@ -1,0 +1,25 @@
+# Training pipeline dependencies
+# Install unsloth first (handles quantisation + LoRA integration):
+#   pip install unsloth
+# Then install the rest:
+
+unsloth
+trl>=0.12
+peft>=0.14
+transformers>=4.46
+accelerate>=0.33
+bitsandbytes>=0.43
+vllm
+openai>=1.0
+openai-harmony
+sentence-transformers
+scikit-learn
+datasets
+torch>=2.1
+numpy
+pandas
+sympy
+kagglehub
+jupyter-client
+httpx
+tqdm

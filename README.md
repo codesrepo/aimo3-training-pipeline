@@ -79,9 +79,9 @@ introduced. Without this, early GRPO generations are dominated by format errors.
 **`oracle_traces_aimo.py`**
 Runs gpt-oss-120b via local vLLM on every no-match problem from `predictions_log.jsonl`,
 allowing up to 8 tool-augmented attempts per problem. Keeps only traces where the predicted
-answer matches the expected answer. Loads `kmeans_model.pkl` at startup to write
-`predicted_cluster` and `cluster_mismatch_rate` into each retained trace — this label is
-used for difficulty weighting during GRPO. Traces accumulate across training rounds.
+answer matches the expected answer. Loads `kmeans_model.pkl` at startup to annotate each retained trace with
+`predicted_cluster` and `cluster_mismatch_rate` fields for provenance tracking.
+Traces accumulate across training rounds.
 
 - **Reads**: `predictions_log.jsonl`, `kmeans_model.pkl`, `cluster_stats.json`
 - **Writes**:
@@ -238,7 +238,7 @@ Run on 8× H100 80 GB.
 |------|----------|
 | Stages 0–6 (data + training) | RTX PRO 6000 Blackwell Max-Q (102 GB VRAM), local WSL2 |
 | Stage 7 (MXFP4 baking) | 8× NVIDIA H100 80 GB (Kaggle notebook) |
-| Inference (Kaggle submission) | 2× NVIDIA H100 80 GB |
+| Inference (Kaggle submission) | 1× NVIDIA H100 80 GB (tensor-parallel-size 1) |
 
 ## Requirements
 
