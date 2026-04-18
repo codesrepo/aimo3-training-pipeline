@@ -29,7 +29,7 @@ from trl import GRPOTrainer, GRPOConfig
 LOCAL_MODEL_DIR = "/home/malam/wsl-tunix/imo/model/gpt-oss-120b-bnb4"
 TRAIN_JSONL     = "/home/malam/wsl-tunix/imo/openmath_data/aimo_certs_207.jsonl"
 #SFT_LORA_DIR    = "/content/drive/MyDrive/IT5002/lora_adapter_drgrpo/"
-SFT_LORA_DIR = " "
+SFT_LORA_DIR = "/home/malam/wsl-tunix/imo/home/saved_models/lora_adapter_sft_r4_e5"
 OUT_DIR         = "/home/malam/wsl-tunix/imo/lora_grpo_adapter"
 
 # ----------------------------
