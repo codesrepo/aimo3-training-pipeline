@@ -68,8 +68,18 @@ Kaggle H100 inference           ← vLLM + Harmony tool-augmented self-consisten
 | Script | Purpose | Input | Key hyperparameters |
 |--------|---------|-------|---------------------|
 | `sft_lora.py` | Supervised fine-tuning warm-start. Teaches Harmony tool-use format before RL to prevent format errors dominating early GRPO reward. | `high_mismatch_harmony.jsonl` (2,710 examples) | LoRA r=4 α=8, base=gpt-oss-120b BnB4 |
-| `grpo_lora.py` | Dr.GRPO two-phase RL. Phase A (10 steps): certificate-first rewards. Phase B (20 steps): answer-first rewards. Cluster mismatch rate used for difficulty weighting. | `aimo_certs_207.jsonl` (207 oracle traces) | LR=5e-6, β=0.001, G=2, batch=1 |
-| `train_dpo.py` | ORPO preference fine-tuning on top of GRPO adapter. Pushes model toward correct Harmony tool-use traces and away from common failure modes. Best checkpoint at 700 steps. | `training_samples_multi.jsonl` (1,415 pairs) | LR=5e-6, β=0.001, 1000 steps, LoRA r=4 α=8, max_total=4,224 tok |
+| `aimo_drgrpo_lora_r4_copy.py` | Dr.GRPO two-phase RL (actual script used for submission). Phase A (10 steps): certificate-first rewards. Phase B (20 steps): answer-first rewards. Cluster mismatch rate used for difficulty weighting. | `aimo_certs_207.jsonl` (207 oracle traces) | LR=5e-6, β=0.001, G=2, batch=1 |
+| `grpo_lora.py` | Cleaned reference version of the GRPO training script. | `aimo_certs_207.jsonl` | Same as above |
+| `train_dpo.py` | ORPO preference fine-tuning on top of GRPO adapter. **Training signal**: answer-only pairs — prompt = problem, chosen = `\boxed{correct}`, rejected = `\boxed{wrong}`. No solution trace is provided; model is calibrated on final answer preference. Best checkpoint at 700 steps. | `training_samples_v25232026.jsonl` (1,415 answer-only pairs) | LR=5e-6, β=0.001, 1000 steps, LoRA r=4 α=8 |
+| `merge_lora_v2.py` | Merge LoRA adapter into base MXFP4 weights using Unsloth `save_pretrained_merged` with `save_method="mxfp4"`. Produces ~61 GB merged checkpoint. | Base MXFP4 model + LoRA adapter | `merged_gpt_oss120b_v25032026/` |
+
+### Evaluation (Number Regeneration)
+
+| Script | Purpose | Regenerates |
+|--------|---------|-------------|
+| `data_selection.py` | Score gpt-oss-120b on OpenMathReasoning subset via Harmony vLLM inference. Produces per-problem predictions with match/no-match labels. | `predictions_log_base.jsonl` → 662 problems, 53.0% match rate |
+| `evaluate_model.py` | Evaluate base model, SFT adapter, and GRPO adapter on 50-problem test set. Reports exact-match accuracy for each configuration. | Per-adapter accuracy numbers in Section 4 |
+| `run_evaluation.py` | Wrapper that runs `evaluate_model.py` three times (base / SFT / GRPO) and prints a comparison table. | All three accuracy numbers in one run |
 
 ---
 
